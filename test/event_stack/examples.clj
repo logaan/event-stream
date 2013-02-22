@@ -44,7 +44,6 @@
   (require [matchure :refer :all]))
 
 ; Setup
-
 (defmacro deflistener [listener-name docstring args & body]
   `(def ~listener-name {
     :name ~(keyword listener-name)
@@ -52,8 +51,7 @@
     :callback (fn-match ~args
       ~@body)}))
 
-; Fake business logic
-
+; Locked doors  
 (defn move [player direction]
   (println "called move"))
 
@@ -62,8 +60,6 @@
 
 (defn has-key? [player door]
   (println "called has-key?"))
-
-; Example listener
 
 (deflistener unlock-door
   "Listens for players trying to move through doors. If the door is locked
@@ -81,8 +77,25 @@
         [state (cons [:unlocked :red :door] events) listeners]
         [state (rest events) listeners]))))
 
-; Call with example inputs
+; Periodic time events
+(defn current-time []
+  (println "called current-time"))
 
+(defn time-event? [event]
+  (println "called time-event?"))
+
+(deflistener clock 
+  "Will periodically emit time-passing events."
+  [?state ?events ?listeners]
+  (let [last-time-event (first (find time-event? events))
+        current-time    (current-time)
+        time-elapsed    (- current-time (:time last-time-event))
+        new-event       {:time-elapsed time-elapsed :time current-time}]
+    (if (<= time-elapsed 100)
+      [state (cons new-event events) listeners]
+      [state events listeners])))
+
+; Call with example inputs
 (let [world     {:player "Logan" :doors {[2 2] :red}} 
       events    [{:type :move :direction :north}] 
       listeners [unlock-door]]
