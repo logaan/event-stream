@@ -71,6 +71,17 @@
   - left click
   - 50ms passes
   - left click
+- Terminal snake
+  - Generator:  Keypress events
+  - Generator:  Opponent position from network
+  - Translator: keypress -> L/R
+  - Translator: L/R      -> N/S/E/W
+  - Updater:    N/S/E/W  -> Position
+  - Updater:    Opponent position
+  - Updater:    Collisions
+  - Updater:    Food generation
+  - Updater:    Food consumption
+  - Consumer:   Display screen
 
 - If the player has is trying to move onto a door
  - If the door is unlocked

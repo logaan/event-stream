@@ -1,6 +1,8 @@
-(ns event-stack.core)
+(ns event-stack.core 
+  (:import jline.console.ConsoleReader))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn -main []
+  (println "Press a key:")
+  (let [charNum (.readCharacter (ConsoleReader.))]
+    (println (char charNum)))) 
+
