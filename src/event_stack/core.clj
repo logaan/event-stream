@@ -1,23 +1,15 @@
 (ns event-stack.core 
-  (:import jline.console.ConsoleReader
-           jline.UnixTerminal))
-
-(def codes {
-  :reset   "[0m"
-  :black   "[30m"
-  :red     "[31m"
-  :green   "[32m"
-  :yellow  "[33m"
-  :blue    "[34m"
-  :magenta "[35m"
-  :cyan    "[36m"
-  :white   "[37m"})
+  (:require [lanterna.screen :as s]))
 
 (defn -main []
-  (let [console (ConsoleReader.)]
-    (.clearScreen console)
-    (println "Press a key:")
-    (let [letter (-> console .readCharacter char str)]
-      (println (str (codes :reset) "You pressed: " (codes :magenta) letter))
-      (println (str (codes :reset) "You pressed: " (codes :red) letter)))))
+  (println "foo")
+  (let [scr (s/get-screen :unix)]
+    (s/in-screen scr
+
+    (s/put-string scr 10 10 "Hello, world!" {:fg :black :bg :yellow}) 
+    (s/put-string scr 10 11 "Press any key to exit!") 
+
+    (s/redraw scr) 
+
+    (s/get-key-blocking scr))))
 
