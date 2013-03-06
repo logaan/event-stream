@@ -8,7 +8,8 @@
   {:events []})
 
 (def setup
-  terminal/setup)
+  (comp terminal/setup
+        movement/setup))
 
 (def teardown
   terminal/teardown)
@@ -26,5 +27,6 @@
         (recur (game-loop game)))
       (catch Exception e
         (throw e))
-      (finally (teardown setup-game)))))
+      (finally
+        (teardown setup-game)))))
 
