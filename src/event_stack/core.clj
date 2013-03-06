@@ -4,12 +4,11 @@
      [terminal :as terminal]
      [movement :as movement]]))
 
-(defn game-loop [thread]
-  (-> thread
-      terminal/get-keypress!  
-      terminal/handle-exit
-      movement/interpret-movement
-      terminal/draw-screen!))
+(def game-loop
+  (comp terminal/draw-screen!
+        movement/interpret-movement
+        terminal/handle-exit
+        terminal/get-keypress!))
 
 (defn -main []
   (try
