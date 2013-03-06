@@ -5,7 +5,7 @@
 
 (defn setup []
   (let [screen (s/get-screen :unix)
-       thread {:state {:screen screen} :events []}] 
+       thread {:screen screen :events []}] 
     (reset! saved-screen screen)
     (s/start screen)
     thread)) 
@@ -13,8 +13,8 @@
 (defn teardown []
   (s/stop @saved-screen))
 
-(defn get-keypress! [{:keys [state] :as input}]
-  (let [keypress       (s/get-key-blocking (:screen state))
+(defn get-keypress! [{:keys [screen] :as input}]
+  (let [keypress       (s/get-key-blocking screen)
         keypress-event {:type :keypress :key keypress}]
     (update-in input [:events] #(cons keypress-event %))))
 
@@ -24,11 +24,10 @@
     (throw (RuntimeException. "Quitting"))
     input))
 
-(defn draw-screen! [{state :state [event & events] :events :as input}]
+(defn draw-screen! [{screen :screen [event & events] :events :as input}]
   (if (= (:type event) :move)
-    (let [screen    (state :screen)
-        direction (:direction event)
-        output    (str "You move " (name direction))]
+    (let [direction (:direction event)
+          output    (str "You move " (name direction))]
       (s/clear screen)
       (s/put-string screen 10 10 output {:fg :black :bg :yellow}) 
       (s/redraw screen)
