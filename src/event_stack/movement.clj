@@ -28,7 +28,8 @@
     (= (:type event) type)))
 
 (defn handle-events [{events :events :as game} event-type handling-function]
-  (let [{relevant-events true other-events false} (group-by (is-event? event-type) events)
+  (let [grouped-events (group-by (is-event? event-type) events)
+        {relevant-events true other-events false} grouped-events
         uneventful-game (assoc game :events other-events)]
     (reduce handling-function uneventful-game relevant-events)))
 
@@ -37,8 +38,8 @@
         move-events (vec (map move-event directions))]
     (update-in game [:events] (partial concat move-events))))
 
-(defn move-player [{{position :position} :player :as game} {direction :direction}]
-  (let [offsets      (moves->offsets direction)
+(defn move-player [{{position :position} :player :as game} event]
+  (let [offsets      (moves->offsets (:direction event))
         new-position (vec (map + position offsets))]
     (assoc-in game [:player :position] new-position)))
 
