@@ -6,9 +6,12 @@
         keypress-event {:type :keypress :key keypress}]
     (update-in input [:events] #(cons keypress-event %))))
 
-(defn handle-exit [{[event & events] :events :as input}]
-  (if (and (= (:type event) :keypress)
-           (= (:key event)  \q))
+(defn exit-keypress? [event]
+  (and (= (:type event) :keypress)
+       (= (:key event)  \q)))
+
+(defn handle-exit [{events :events :as input}]
+  (if (not (empty? (filter exit-keypress? events)))
     (throw (RuntimeException. "Quitting"))
     input))
 

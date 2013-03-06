@@ -28,19 +28,14 @@
     (= (:type event) type)))
 
 (defn handle-events [{events :events :as game} event-type handling-function]
-  (let [{relevant-events true other-events false} (group-by (is-event? event-type) events)]
-    (-> (reduce handling-function game relevant-events)
-        (assoc :events other-events))))
-
-(defn add-events [{events :events :as game} events]
-  (assoc-in game [:events] (concat move-events events)))
+  (let [{relevant-events true other-events false} (group-by (is-event? event-type) events)
+        uneventful-game (assoc game :events other-events)]
+    (reduce handling-function uneventful-game relevant-events)))
 
 (defn convert-keypress-event [game keypress-event]
-  (let [directions  (keys->moves (keypress-event :key))
+  (let [directions  (keys->moves (:key keypress-event))
         move-events (vec (map move-event directions))]
-    (if (not (empty? directions))
-      (add-events game move-events) 
-      game)))
+    (update-in game [:events] (partial concat move-events))))
 
 (defn move-player [{{position :position} :player :as game} {direction :direction}]
   (let [offsets      (moves->offsets direction)
@@ -53,9 +48,15 @@
 (defn move [game]
   (handle-events game :move move-player))
 
-(move {:player {:position [10 10]}
-       :events [{:type :move :direction :down}]})
-
-(move {:player {:position [10 10]}
-       :events []})
+; (move {:player {:position [10 10]}
+;        :events [{:type :move :direction :down}]})
+; 
+; (move {:player {:position [10 10]}
+;        :events []})
+; 
+; (interpret-movement {:events [{:type :keypress :key \u}]})
+; 
+; (interpret-movement {:events [{:type :keypress :key \h}]})
+; 
+; (interpret-movement {:events [{:type :keypress :key \t}]})
 
