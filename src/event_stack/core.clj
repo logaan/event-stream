@@ -20,10 +20,11 @@
         terminal/get-keypress!))
 
 (defn -main []
-  (try
-    (loop [game (setup blank-game)] 
-      (recur (game-loop game)))
-    (catch Exception e
-      (throw e))
-    (finally (teardown))))
+  (let [setup-game (setup blank-game)]
+    (try
+      (loop [game setup-game] 
+        (recur (game-loop game)))
+      (catch Exception e
+        (throw e))
+      (finally (teardown setup-game)))))
 

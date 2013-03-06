@@ -1,17 +1,14 @@
 (ns event-stack.terminal
   (:require [lanterna.screen :as s]))
 
-(def saved-screen (atom nil))
-
 (defn setup [game]
   (let [screen (s/get-screen :unix)
        new-game (assoc game :screen screen)] 
-    (reset! saved-screen screen)
     (s/start screen)
     new-game)) 
 
-(defn teardown []
-  (s/stop @saved-screen))
+(defn teardown [{screen :screen}]
+  (s/stop screen))
 
 (defn get-keypress! [{:keys [screen] :as input}]
   (let [keypress       (s/get-key-blocking screen)
