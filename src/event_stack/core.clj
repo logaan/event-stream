@@ -18,13 +18,13 @@
   (spit "output.log" (str game "\n") :append true)
   game)
 
-; NOTE: This is upside down!
-(def game-loop
-  (comp terminal/draw-screen!
-        movement/move
-        movement/interpret-movement
-        terminal/handle-exit
-        terminal/get-keypress!))
+(defn game-loop [game]
+  (-> game
+      terminal/get-keypress!
+      terminal/handle-exit
+      movement/interpret-movement
+      movement/move
+      terminal/draw-screen!))
 
 (defn -main []
   (let [setup-game (setup blank-game)]
