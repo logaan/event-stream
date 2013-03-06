@@ -4,6 +4,15 @@
      [terminal :as terminal]
      [movement :as movement]]))
 
+(def blank-game 
+  {:events []})
+
+(def setup
+  terminal/setup)
+
+(def teardown
+  terminal/teardown)
+
 (def game-loop
   (comp terminal/draw-screen!
         movement/interpret-movement
@@ -12,9 +21,9 @@
 
 (defn -main []
   (try
-    (loop [thread (terminal/setup)] 
-      (recur (game-loop thread)))
+    (loop [game (setup blank-game)] 
+      (recur (game-loop game)))
     (catch Exception e
       (throw e))
-    (finally (terminal/teardown))))
+    (finally (teardown))))
 

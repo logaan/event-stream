@@ -3,12 +3,12 @@
 
 (def saved-screen (atom nil))
 
-(defn setup []
+(defn setup [game]
   (let [screen (s/get-screen :unix)
-       thread {:screen screen :events []}] 
+       new-game (assoc game :screen screen)] 
     (reset! saved-screen screen)
     (s/start screen)
-    thread)) 
+    new-game)) 
 
 (defn teardown []
   (s/stop @saved-screen))
