@@ -14,8 +14,14 @@
 (def teardown
   terminal/teardown)
 
+(defn log [game]
+  (spit "output.log" (str game "\n") :append true)
+  game)
+
+; NOTE: This is upside down!
 (def game-loop
   (comp terminal/draw-screen!
+        movement/move
         movement/interpret-movement
         terminal/handle-exit
         terminal/get-keypress!))
