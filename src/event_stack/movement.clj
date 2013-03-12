@@ -23,15 +23,14 @@
 (defn move-event [direction]
   {:type :move :direction direction})
 
-(defn is-event? [type]
-  (fn [event]
-    (= (:type event) type)))
+(defn is-event? [type event]
+  (= (:type event) type))
 
-(defn handle-events [{events :events :as game} event-type handling-function]
-  (let [grouped-events (group-by (is-event? event-type) events)
-        {relevant-events true other-events false} grouped-events
-        uneventful-game (assoc game :events other-events)]
-    (reduce handling-function uneventful-game relevant-events)))
+(defn handle-event [{[event & future-events] :events :as game} event-type handler]
+  (if (is-event? event-type event)
+    (let [eventless-game (assoc game :events future-events)]
+      (handler eventless-game event))
+    game))
 
 (defn convert-keypress-event [game keypress-event]
   (let [directions  (keys->moves (:key keypress-event))
@@ -49,10 +48,10 @@
       game)))
 
 (defn interpret-movement [game]
-  (handle-events game :keypress convert-keypress-event)) 
+  (handle-event game :keypress convert-keypress-event)) 
 
 (defn move [game]
-  (handle-events game :move move-player))
+  (handle-event game :move move-player))
 
 ; So I wanted to have a function that would consume any events that would cause
 ; you to walk outside of the terminal. But the move step can consume multiple
@@ -62,15 +61,15 @@
 ; implementation is so tied to the other one that I'm not sure there's any
 ; point.
 
-; (move {:player {:position [10 10]}
-;        :events [{:type :move :direction :down}]})
-; 
-; (move {:player {:position [10 10]}
-;        :events []})
-; 
-; (interpret-movement {:events [{:type :keypress :key \u}]})
-; 
-; (interpret-movement {:events [{:type :keypress :key \h}]})
-; 
-; (interpret-movement {:events [{:type :keypress :key \t}]})
+(move {:player {:position [10 10]}
+       :events [{:type :move :direction :down}]})
+
+(move {:player {:position [10 10]}
+       :events []})
+
+(interpret-movement {:events [{:type :keypress :key \u}]})
+
+(interpret-movement {:events [{:type :keypress :key \h}]})
+
+(interpret-movement {:events [{:type :keypress :key \t}]})
 
