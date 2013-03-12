@@ -18,9 +18,12 @@
   (spit "output.log" (str game "\n") :append true)
   game)
 
+(defn event-source [game]
+  (-> game
+      terminal/get-keypress!))
+
 (defn game-loop [game]
   (-> game
-      terminal/get-keypress!
       terminal/handle-exit
       movement/interpret-movement
       movement/move
@@ -30,7 +33,10 @@
   (let [setup-game (setup blank-game)]
     (try
       (loop [game setup-game] 
-        (recur (game-loop game)))
+        (recur (loop [game (event-source game)]
+          (if (empty? (:events game)) 
+            game 
+            (recur (game-loop game))))))
       (catch Exception e
         (throw e))
       (finally
