@@ -29,14 +29,17 @@
       movement/move
       terminal/draw-screen!))
 
+(defn process-events [game]
+  (if (empty? (:events game)) 
+    game (recur (game-loop game))))
+
+(defn process-input [game]
+  (recur (process-events (event-source game))))
+
 (defn -main []
   (let [setup-game (setup blank-game)]
     (try
-      (loop [game setup-game] 
-        (recur (loop [game (event-source game)]
-          (if (empty? (:events game)) 
-            game 
-            (recur (game-loop game))))))
+      (process-input setup-game)
       (catch Exception e
         (throw e))
       (finally
