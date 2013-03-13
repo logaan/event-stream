@@ -18,23 +18,26 @@
   (spit "output.log" (str game "\n") :append true)
   game)
 
-(defn event-source [game]
+(defn event-sources! [game]
   (-> game
       terminal/get-keypress!))
 
-(defn game-loop [game]
+(defn event-handlers [game]
   (-> game
       terminal/handle-exit
       movement/interpret-movement
-      movement/move
+      movement/move))
+
+(defn event-sinks! [game]
+  (-> game
       terminal/draw-screen!))
 
 (defn process-events [game]
   (if (empty? (:events game)) 
-    game (recur (game-loop game))))
+    game (recur (event-handlers game))))
 
 (defn process-input [game]
-  (recur (process-events (event-source game))))
+  (recur (-> game event-sources! process-events event-sinks!)))
 
 (defn -main []
   (let [setup-game (setup blank-game)]
