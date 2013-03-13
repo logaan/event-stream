@@ -1,4 +1,6 @@
-(ns event-stack.movement)
+(ns event-stack.movement
+  (:require
+    [midje.sweet :refer :all]))
 
 (defn setup [game]
   (assoc game :player {:position [10 10]}))
@@ -61,15 +63,24 @@
 ; implementation is so tied to the other one that I'm not sure there's any
 ; point.
 
-(move {:player {:position [10 10]}
-       :events [{:type :move :direction :down}]})
+(fact
+  (move {:player {:position [10 10]}
+         :events [{:type :move :direction :down}]})
+  => {:player {:position [10 11]} :events nil})
 
-(move {:player {:position [10 10]}
-       :events []})
+(fact
+  (move {:player {:position [10 10]} :events []})
+  => {:player {:position [10 10]} :events []})
 
-(interpret-movement {:events [{:type :keypress :key \u}]})
+(fact
+  (interpret-movement {:events [{:type :keypress :key \u}]})
+  => {:events [{:type :move, :direction :up} {:type :move, :direction :right}]})
 
-(interpret-movement {:events [{:type :keypress :key \h}]})
+(fact
+  (interpret-movement {:events [{:type :keypress :key \h}]})
+  => {:events [{:type :move, :direction :left}]}) 
 
-(interpret-movement {:events [{:type :keypress :key \t}]})
+(fact
+  (interpret-movement {:events [{:type :keypress :key \t}]})
+  => {:events []}) 
 

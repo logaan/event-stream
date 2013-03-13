@@ -4,6 +4,7 @@
   :main event-stack.core
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.0"]
                  [matchure "0.10.1"]
-                 [clojure-lanterna "0.9.3"]])
+                 [clojure-lanterna "0.9.3"]
+                 [midje "1.5.0"]])
