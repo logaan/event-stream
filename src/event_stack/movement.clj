@@ -22,9 +22,6 @@
    :up    [0 -1]
    :down  [0 +1]})
 
-(defn move-event [direction]
-  {:type :move :direction direction})
-
 (defn is-event? [type event]
   (= (:type event) type))
 
@@ -34,40 +31,47 @@
       (handler eventless-game event))
     game))
 
-(defn within-the-boundaries? [[x y]]
-  (and (<= 0 x 79) (<= 0 y 23)))
+(defn add-events [game events]
+  (update-in game [:events] (partial concat (vec events))))
+
+(defn add-event [game event]
+  (add-events game [event]))
+
+(defn move-event [direction]
+  {:type :move :direction direction})
 
 (defn interpret-movement [game]
   (handle-event game :keypress
     (fn [game keypress-event]
-      (let [directions  (keys->moves (:key keypress-event))
-            move-events (vec (map move-event directions))]
-        (update-in game [:events] (partial concat move-events)))))) 
+      (let [directions (keys->moves (:key keypress-event))]
+        (add-events game (map move-event directions)))))) 
 
-(defn move [game]
+(defn move-to-event [position]
+  {:type :move-to :position position})
+
+(defn move-direction-to-move-position [game]
   (handle-event game :move
-    (fn move-player [{{position :position} :player :as game} event]
-      (let [offsets      (moves->offsets (:direction event))
+    (fn [{{position :position} :player :as game} {direction :direction}]
+      (let [offsets      (moves->offsets direction)
             new-position (vec (map + position offsets))]
-        (if (within-the-boundaries? new-position)
-          (assoc-in game [:player :position] new-position)
-          game)))))
+          (add-event game (move-to-event new-position))))))
 
-; So I wanted to have a function that would consume any events that would cause
-; you to walk outside of the terminal. But the move step can consume multiple
-; walk events. Potentially none of which individually would step you outside,
-; but combined they would. So this interceptor function would have to consume
-; them all and know how they'd affect everyting. At that point it's
-; implementation is so tied to the other one that I'm not sure there's any
-; point.
+(defn update-position [game]
+  (handle-event game :move-to
+   (fn [game {position :position}]
+     (assoc-in game [:player :position] position))))
 
-(fact
-  (move {:player {:position [10 10]}
-         :events [{:type :move :direction :down}]})
-  => {:player {:position [10 11]} :events nil})
+
+(defn within-the-boundaries? [[x y]]
+  (and (<= 0 x 79) (<= 0 y 23)))
 
 (fact
-  (move {:player {:position [10 10]} :events []})
+  (move-direction-to-move-position {:player {:position [10 10]}
+                                    :events [{:type :move :direction :down}]})
+  => {:events [{:position [10 11], :type :move-to}], :player {:position [10 10]}})
+
+(fact
+  (move-direction-to-move-position {:player {:position [10 10]} :events []})
   => {:player {:position [10 10]} :events []})
 
 (fact
@@ -81,4 +85,9 @@
 (fact
   (interpret-movement {:events [{:type :keypress :key \t}]})
   => {:events []}) 
+
+(fact
+  (update-position {:player {:position [10 10]}
+                  :events [{:type :move-to :position [20 20]}]})
+  => {:player {:position [20 20]}, :events nil})
 

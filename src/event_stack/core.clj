@@ -26,7 +26,8 @@
   (-> game
       terminal/handle-exit
       movement/interpret-movement
-      movement/move))
+      movement/move-direction-to-move-position
+      movement/update-position))
 
 (defn event-sinks! [game]
   (-> game
