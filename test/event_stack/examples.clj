@@ -53,13 +53,13 @@
 
 ; Locked doors  
 (defn move [player direction]
-  (println "called move"))
+  "called move")
 
 (defn unlocked? [door]
-  (println "called unlocked?"))
+  "called unlocked?")
 
 (defn has-key? [player door]
-  (println "called has-key?"))
+  "called has-key?")
 
 (deflistener unlock-door
   "Listens for players trying to move through doors. If the door is locked
@@ -79,10 +79,10 @@
 
 ; Periodic time events
 (defn current-time []
-  (println "called current-time"))
+  "called current-time")
 
 (defn time-event? [event]
-  (println "called time-event?"))
+  "called time-event?")
 
 (deflistener clock 
   "Will periodically emit time-passing events."
