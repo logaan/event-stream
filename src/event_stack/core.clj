@@ -11,12 +11,14 @@
 (def blank-game 
   {:events []})
 
-(def setup
-  (comp terminal/setup
-        movement/setup))
+(defn setup [game]
+  (-> game
+      terminal/setup
+      movement/setup))
 
-(def teardown
-  terminal/teardown)
+(defn teardown [game]
+  (-> game
+      terminal/teardown))
 
 (defn event-sources! [game]
   (-> game
