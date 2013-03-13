@@ -1,20 +1,17 @@
 (ns event-stack.core 
   (:require
     [event-stack
+     [util     :as util] 
      [terminal :as terminal]
      [movement :as movement]]))
-
-(defn log [game]
-  (spit "output.log" (str game "\n") :append true)
-  game)
 
 (def blank-game 
   {:events []})
 
 (defn setup [game]
   (-> game
-      terminal/setup
-      movement/setup))
+      movement/setup  
+      terminal/setup))
 
 (defn teardown [game]
   (-> game
