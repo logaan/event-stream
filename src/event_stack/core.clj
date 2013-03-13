@@ -4,6 +4,10 @@
      [terminal :as terminal]
      [movement :as movement]]))
 
+(defn log [game]
+  (spit "output.log" (str game "\n") :append true)
+  game)
+
 (def blank-game 
   {:events []})
 
@@ -13,10 +17,6 @@
 
 (def teardown
   terminal/teardown)
-
-(defn log [game]
-  (spit "output.log" (str game "\n") :append true)
-  game)
 
 (defn event-sources! [game]
   (-> game
