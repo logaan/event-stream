@@ -56,14 +56,19 @@
             new-position (vec (map + position offsets))]
           (add-event game (move-to-event new-position))))))
 
+(defn within-the-boundaries? [[x y]]
+  (and (<= 0 x 79) (<= 0 y 23)))
+
+(defn prevent-movement-outside-boundaries [game]
+  (handle-event game :move-to
+    (fn [game {position :position :as event}]
+      (if (within-the-boundaries? position)
+        (add-event game event) game))))
+
 (defn update-position [game]
   (handle-event game :move-to
    (fn [game {position :position}]
      (assoc-in game [:player :position] position))))
-
-
-(defn within-the-boundaries? [[x y]]
-  (and (<= 0 x 79) (<= 0 y 23)))
 
 (fact
   (move-direction-to-move-position {:player {:position [10 10]}

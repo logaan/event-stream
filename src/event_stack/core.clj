@@ -27,6 +27,7 @@
       terminal/handle-exit
       movement/interpret-movement
       movement/move-direction-to-move-position
+      movement/prevent-movement-outside-boundaries
       movement/update-position))
 
 (defn event-sinks! [game]
